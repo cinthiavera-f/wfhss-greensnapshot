@@ -140,6 +140,34 @@ textarea{resize:vertical;min-height:80px}
   </div>
 </div>
 
+<!-- ENTRY CHOICE -->
+<div id="p0b" class="page" style="background:linear-gradient(150deg,#5A1212 0%,#7D1D1D 55%,#9B2525 100%);align-items:center;justify-content:center;padding:2.5rem 1.5rem">
+  <div style="max-width:480px;width:100%;z-index:1;text-align:center">
+    <div style="font-family:'Playfair Display',serif;font-size:clamp(1.6rem,4vw,2.2rem);font-weight:900;color:#fff;line-height:1.1;margin-bottom:.5rem">Green CSSD<br>World Map</div>
+    <p style="color:rgba(255,255,255,.6);font-size:.9rem;margin-bottom:2.5rem;font-style:italic">WFHSS Sustainability Snapshot 2026</p>
+
+    <!-- Option 1: Take survey -->
+    <div id="btn-survey" style="background:#fff;border-radius:16px;padding:1.6rem 1.4rem;margin-bottom:1rem;cursor:pointer;transition:all .2s;box-shadow:0 8px 28px rgba(0,0,0,.22);text-align:left;display:flex;align-items:center;gap:1.1rem">
+      <div style="width:52px;height:52px;border-radius:12px;background:linear-gradient(135deg,#2A8A8A,#1A6666);display:flex;align-items:center;justify-content:center;font-size:1.5rem;flex-shrink:0">🌱</div>
+      <div>
+        <div style="font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;color:#7D1D1D;margin-bottom:.2rem">Add my voice to the map</div>
+        <div style="font-size:.82rem;color:#888;line-height:1.4">Take the 3-minute survey and place your country on the world map</div>
+      </div>
+    </div>
+
+    <!-- Option 2: View map -->
+    <div id="btn-viewmap" style="background:rgba(255,255,255,.1);border:2px solid rgba(255,255,255,.25);border-radius:16px;padding:1.6rem 1.4rem;cursor:pointer;transition:all .2s;text-align:left;display:flex;align-items:center;gap:1.1rem">
+      <div style="width:52px;height:52px;border-radius:12px;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:1.5rem;flex-shrink:0">🗺️</div>
+      <div>
+        <div style="font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;color:#fff;margin-bottom:.2rem">View the live map</div>
+        <div style="font-size:.82rem;color:rgba(255,255,255,.6);line-height:1.4">See how many professionals have contributed from around the world</div>
+      </div>
+    </div>
+
+    <button id="btn-back-entry" style="background:transparent;border:none;color:rgba(255,255,255,.45);font-family:'DM Sans',sans-serif;font-size:.82rem;cursor:pointer;margin-top:1.5rem;text-decoration:underline">← Back</button>
+  </div>
+</div>
+
 <!-- BLOCK 1 -->
 <div id="p1" class="page">
   <div class="fhdr">
@@ -394,6 +422,11 @@ function go(id){
 }
 
 function initButtons(){
+  // Hover effects for entry cards
+  document.getElementById('btn-survey').addEventListener('mouseover',function(){this.style.transform='translateY(-2px)';this.style.boxShadow='0 12px 36px rgba(0,0,0,.3)';});
+  document.getElementById('btn-survey').addEventListener('mouseout',function(){this.style.transform='translateY(0)';this.style.boxShadow='0 8px 28px rgba(0,0,0,.22)';});
+  document.getElementById('btn-viewmap').addEventListener('mouseover',function(){this.style.background='rgba(255,255,255,.18)';});
+  document.getElementById('btn-viewmap').addEventListener('mouseout',function(){this.style.background='rgba(255,255,255,.1)';});
   document.querySelectorAll('.ynb').forEach(function(b){
     b.addEventListener('click',function(){
       var g=b.dataset.g;
@@ -434,7 +467,10 @@ function initButtons(){
   document.getElementById('fidea').addEventListener('input',function(){
     document.getElementById('ideacnt').textContent=this.value.length+'/200';
   });
-  document.getElementById('btn0').addEventListener('click',function(){go('p1');});
+  document.getElementById('btn0').addEventListener('click',function(){go('p0b');});
+  document.getElementById('btn-survey').addEventListener('click',function(){go('p1');});
+  document.getElementById('btn-viewmap').addEventListener('click',function(){go('p6');});
+  document.getElementById('btn-back-entry').addEventListener('click',function(){go('p0');});
   document.getElementById('bk1').addEventListener('click',function(){go('p0');});
   document.getElementById('nx1').addEventListener('click',v1);
   document.getElementById('bk2').addEventListener('click',function(){go('p1');});
