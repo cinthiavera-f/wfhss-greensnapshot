@@ -102,6 +102,8 @@ textarea{resize:vertical;min-height:80px}
 .certfoot{font-size:.74rem;color:#BBB}
 .certfoot strong{color:#7D1D1D}
 .btnmap{width:100%;padding:.92rem;background:linear-gradient(135deg,#2A8A8A,#1A6666);color:#fff;border:none;border-radius:50px;font-family:'DM Sans',sans-serif;font-size:.93rem;font-weight:600;cursor:pointer;transition:all .2s;margin-bottom:.6rem}
+.btndl{width:100%;padding:.82rem;background:transparent;color:#C9A84C;border:2px solid #C9A84C;border-radius:50px;font-family:'DM Sans',sans-serif;font-size:.88rem;font-weight:600;cursor:pointer;transition:all .2s;margin-bottom:.6rem}
+.btndl:hover{background:#FFF8E8}
 .btnmap:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(42,138,138,.38)}
 .btnagain{width:100%;padding:.82rem;background:transparent;color:#2A8A8A;border:2px solid #2A8A8A;border-radius:50px;font-family:'DM Sans',sans-serif;font-size:.88rem;font-weight:600;cursor:pointer;transition:all .2s}
 .btnagain:hover{background:#E8F7F7}
@@ -123,6 +125,7 @@ textarea{resize:vertical;min-height:80px}
 @keyframes pulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(2.2);opacity:.35}}
 .pdot{animation:pulse 1.6s ease infinite}
 </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
 <body>
 
@@ -365,7 +368,7 @@ textarea{resize:vertical;min-height:80px}
 
 <!-- CERTIFICATE -->
 <div id="p5" class="page" style="background:linear-gradient(150deg,#0D1B2A,#1A2D3A);align-items:center;justify-content:center;padding:2rem 1.5rem">
-  <div class="certcard">
+  <div class="certcard" id="certcard">
     <div class="certicon">&#x1F30D;</div>
     <div class="certbadge">WFHSS &middot; 27th World Congress 2026</div>
     <div class="certtitle">Certificate of Contribution</div>
@@ -384,6 +387,7 @@ textarea{resize:vertical;min-height:80px}
   </div>
   <div style="max-width:470px;width:100%;margin-top:1rem">
     <button class="btnmap" id="btnmap">&#x1F5FA;&#xFE0F; See my mark on the global map</button>
+    <button class="btndl" id="btndl">&#x2B07;&#xFE0F; Download my certificate</button>
     <button class="btnagain" id="btnagain">&larr; Submit another response</button>
   </div>
 </div>
@@ -479,6 +483,20 @@ function initButtons(){
   document.getElementById('nx3').addEventListener('click',v3);
   document.getElementById('btnmap').addEventListener('click',function(){go('p6');});
   document.getElementById('btnagain').addEventListener('click',reset);
+  document.getElementById('btndl').addEventListener('click',function(){
+    var card = document.getElementById('certcard');
+    html2canvas(card, {
+      scale: 2,
+      useCORS: true,
+      backgroundColor: '#ffffff',
+      logging: false
+    }).then(function(canvas) {
+      var link = document.createElement('a');
+      link.download = 'WFHSS_Certificate_' + (S.name||'CSSD').replace(/\s+/g,'_') + '.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    });
+  });
   document.getElementById('btnback2').addEventListener('click',reset);
 }
 
