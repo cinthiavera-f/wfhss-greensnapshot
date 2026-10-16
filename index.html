@@ -873,6 +873,10 @@
       Add my voice to the map →
     </button>
 
+    <button class="btn-primary" onclick="goToScreen('screen-map')" style="background:rgba(255,255,255,0.12);color:white;border:2px solid rgba(255,255,255,0.3);box-shadow:none;margin-top:0.75rem;">
+      🗺️ View the live map
+    </button>
+
     <p class="participants-live">
       <strong id="live-count">—</strong> professionals have already contributed
     </p>
@@ -1152,6 +1156,11 @@
     </div>
 
     <div class="field-group" style="margin-top:1.5rem">
+      <label class="field-label">Your email <em style="font-weight:400;color:var(--gray)">(optional — to receive your certificate)</em></label>
+      <input type="email" id="f-email" class="field-select" placeholder="e.g. maria@hospital.org" style="appearance:none;">
+    </div>
+
+    <div class="field-group" style="margin-top:0.5rem">
       <label class="field-label">Anything else you'd like to share? <em style="font-weight:400;color:var(--gray)">(optional)</em></label>
       <textarea id="f-comment" class="field-textarea" placeholder="Your thoughts, suggestions, or questions..."></textarea>
     </div>
@@ -1192,10 +1201,13 @@
   </div>
 
   <div style="max-width:500px;width:100%;margin-top:1.2rem;z-index:1;">
-    <button class="btn-download" onclick="goToScreen('screen-map')">
+    <button class="btn-download" onclick="downloadCertificate()">
+      ⬇️ Download my certificate
+    </button>
+    <button class="btn-download" onclick="goToScreen('screen-map')" style="background:linear-gradient(135deg,#1E3A5F,#0A1628);margin-top:0.5rem;">
       🗺️ See my mark on the global map
     </button>
-    <button class="btn-view-map" onclick="resetApp()">
+    <button class="btn-view-map" onclick="resetApp()" style="margin-top:0.5rem;">
       ← Submit another response
     </button>
   </div>
@@ -1491,6 +1503,7 @@ function submitResponse() {
   state.idea = document.getElementById('f-idea').value.trim();
   state.implemented = document.getElementById('f-implemented').value.trim();
   state.comment = document.getElementById('f-comment').value.trim();
+  state.email = (document.getElementById('f-email') || {}).value?.trim() || '';
 
   currentUserCountry = state.country;
 
@@ -1511,7 +1524,8 @@ function submitResponse() {
     topics: (state.topics || []).join(', '),
     implemented: state.implemented,
     idea: state.idea,
-    comment: state.comment
+    comment: state.comment,
+    email: state.email
   };
 
   fetch(SHEET_ENDPOINT, {
@@ -1705,6 +1719,32 @@ function placeDotsOnMap() {
 }
 
 // ══════════════════════════════════
+// DOWNLOAD CERTIFICATE
+// ══════════════════════════════════
+function downloadCertificate() {
+  const card = document.getElementById('cert-card') || document.querySelector('#screen-certificate .cert-card') || document.querySelector('#screen-certificate');
+  if (!card) { window.print(); return; }
+
+  // Try html2canvas if available, otherwise fallback to print
+  if (typeof html2canvas !== 'undefined') {
+    html2canvas(card, { scale: 2, backgroundColor: '#ffffff', useCORS: true }).then(canvas => {
+      const link = document.createElement('a');
+      const name = (state.name || 'certificate').replace(/\s+/g, '_');
+      link.download = 'WFHSS_Snapshot_' + name + '_2026.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    }).catch(() => window.print());
+  } else {
+    // Print-to-PDF fallback: hide everything except the cert card
+    const style = document.createElement('style');
+    style.id = 'print-cert-style';
+    style.textContent = '@media print { body > * { display:none!important } #screen-certificate { display:flex!important; min-height:100vh } }';
+    document.head.appendChild(style);
+    window.print();
+    setTimeout(() => { const s = document.getElementById('print-cert-style'); if(s) s.remove(); }, 1000);
+  }
+}
+
 // RESET
 // ══════════════════════════════════
 function resetApp() {
@@ -1722,6 +1762,7 @@ function resetApp() {
   document.getElementById('f-country').value = '';
   document.querySelectorAll('.yesno-btn, .scale-btn, .topic-card').forEach(el => el.classList.remove('selected'));
   document.getElementById('f-comment').value = '';
+  if (document.getElementById('f-email')) document.getElementById('f-email').value = '';
   document.getElementById('f-idea').value = '';
   document.getElementById('idea-count').textContent = '0/200';
   document.getElementById('f-implemented').value = '';
