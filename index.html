@@ -1778,16 +1778,44 @@ function resetApp() {
 // ══════════════════════════════════
 (async function init() {
   try {
-    const url = SHEET_ENDPOINT + '?action=getStats&t=' + Date.now();
-    const res = await fetch(url);
-    if (res.ok) {
-      const data = await res.json();
-      if (data && data.total != null) {
-        document.getElementById('live-count').textContent = data.total;
+    // Try getStats first (lightweight); fall back to getResponses if it fails or returns no total
+    let total = null;
+
+    try {
+      const urlStats = SHEET_ENDPOINT + '?action=getStats&t=' + Date.now();
+      const resStats = await fetch(urlStats);
+      if (resStats.ok) {
+        const dataStats = await resStats.json();
+        if (dataStats && dataStats.total != null) total = dataStats.total;
+      }
+    } catch(e) { /* ignore, try fallback */ }
+
+    // Fallback: use getResponses (same endpoint used by the map — known working)
+    if (total === null) {
+      const urlResp = SHEET_ENDPOINT + '?action=getResponses&t=' + Date.now();
+      const resResp = await fetch(urlResp);
+      if (resResp.ok) {
+        const dataResp = await resResp.json();
+        if (dataResp && dataResp.total != null) total = dataResp.total;
+        else if (dataResp && Array.isArray(dataResp.responses)) total = dataResp.responses.length;
       }
     }
+
+    if (total !== null) {
+      // Animate count up from 0
+      const el = document.getElementById('live-count');
+      const target = parseInt(total, 10);
+      if (isNaN(target) || target <= 0) { el.textContent = total; return; }
+      let current = 0;
+      const step = Math.max(1, Math.floor(target / 30));
+      const timer = setInterval(() => {
+        current = Math.min(current + step, target);
+        el.textContent = current;
+        if (current >= target) clearInterval(timer);
+      }, 40);
+    }
   } catch(e) {
-    // silently skip — welcome screen shows '—' if offline
+    // silently skip — welcome screen keeps '—' if fully offline
   }
 })();
 </script>
