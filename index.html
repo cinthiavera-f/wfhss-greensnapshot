@@ -1238,7 +1238,7 @@
     </div>
     <div class="map-stat">
       <div class="map-stat-number" id="map-public">—</div>
-      <div class="map-stat-label">Public institutions</div>
+      <div class="map-stat-label">Public hospitals</div>
     </div>
   </div>
 
@@ -1260,7 +1260,7 @@
 // ══════════════════════════════════
 // CONFIG
 // ══════════════════════════════════
-const SHEET_ENDPOINT = 'https://script.google.com/macros/s/AKfycbw740sdU_CwILlBCx4uBZV_xiP0TG4FdRw2NXK8NhXPA_hW4G839fEgZ7whX22QIeAz/exec';
+const SHEET_ENDPOINT = 'https://script.google.com/macros/s/AKfycbwcaEpJFzpPpfzkr7wF_i3YO6MLJk3hAAy7cR5fVkfyH1woe6Y1Kvw7D53yRpbmRTcD/exec';
 const REFRESH_INTERVAL_MS = 30000; // 30 seconds
 
 // ══════════════════════════════════
@@ -1567,9 +1567,8 @@ let d3Projection = null;
 function renderMap() {
   // Update stats from current liveResponses
   if (liveResponses.length > 0) {
-    const publicCount = liveResponses.filter(r => r.institution === 'Public').length;
-    const pct = Math.round((publicCount / liveResponses.length) * 100);
-    updateMapStats(liveResponses.length, new Set(liveResponses.map(r => r.country)).size, pct);
+    // publicPct comes from the server (data.publicPct); use it if available, else don't override
+    updateMapStats(liveResponses.length, new Set(liveResponses.map(r => r.country)).size, null);
   }
 
   if (mapInitialized && d3Projection) {
